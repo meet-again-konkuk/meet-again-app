@@ -7,7 +7,7 @@ import '../services/api_service.dart';
 class HomeScreens extends StatelessWidget {
   HomeScreens({super.key});
 
-  Future<List<WebToonModel>> webtoons = ApiService.getTodaysToons();
+  final Future<List<WebToonModel>> webtoons = ApiService.getTodaysToons();
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +27,22 @@ class HomeScreens extends StatelessWidget {
       ),
       body: FutureBuilder(
         future: webtoons,
-        builder: (context, snapshot){
-          if(snapshot.hasData){
-            return Text("There is Data");
-          }else{
-            return Text("Loading...");
+        builder: (context, futureData) {
+          if (futureData.hasData) {
+            return ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: futureData.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                print(index);
+                var webtoon = futureData.data![index];
+                return Text(webtoon.title);
+              },
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 20,),
+            );
           }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );
