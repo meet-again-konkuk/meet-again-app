@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meet_again_frontend/widgets/webtoon_widget.dart';
 
 import '../models/webtoon_model.dart';
 import '../services/api_service.dart';
@@ -57,41 +58,8 @@ class HomeScreens extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         print(index);
         var webtoon = futureData.data![index];
-        return Column(
-          children: [
-            Container(
-              clipBehavior: Clip.hardEdge, // 자식의 부모 영역을 침범하는 애??
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 10,
-                    offset: const Offset(10, 10),
-                    color: Colors.black.withOpacity(0.5),
-                  )
-                ],
-              ),
-              width: 250,
-              child: Image.network(
-                webtoon.thumb,
-                headers: const {
-                  "User-Agent":
-                      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                },
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              webtoon.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 22,
-              ),
-            ),
-          ],
-        );
+        return WebToon(
+            title: webtoon.title, thumb: webtoon.thumb, id: webtoon.id);
       },
       separatorBuilder: (BuildContext context, int index) => const SizedBox(
         width: 40,
