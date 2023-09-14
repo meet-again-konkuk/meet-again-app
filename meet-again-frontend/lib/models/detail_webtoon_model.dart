@@ -1,5 +1,5 @@
 class DetailWebToonModel{
-  late final String about, genre, age;
+  late final String title, about, genre, age;
 
   // WebToonModel({
   //   required this.title,
@@ -15,7 +15,8 @@ class DetailWebToonModel{
   //  }
 
   DetailWebToonModel.fromJson(Map<String, dynamic> json)
-      : about = json['about'],
+      : title = json['title'],
+        about = json['about'],
         genre = json['genre'],
         age = json['age'];
 }
