@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meet_again_frontend/models/webtoon_episode_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/detail_webtoon_model.dart';
 import '../services/api_service.dart';
+import '../widgets/episode_widget.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title, thumb, id;
@@ -47,50 +50,48 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 50,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 50),
+          child: Column(
             children: [
-              Hero(
-                tag: widget.id,
-                child: Container(
-                  clipBehavior: Clip.hardEdge, // 자식의 부모 영역을 침범하는 애??
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        offset: const Offset(10, 10),
-                        color: Colors.black.withOpacity(0.5),
-                      )
-                    ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Hero(
+                    tag: widget.id,
+                    child: Container(
+                      clipBehavior: Clip.hardEdge, // 자식의 부모 영역을 침범하는 애??
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 10,
+                            offset: const Offset(10, 10),
+                            color: Colors.black.withOpacity(0.5),
+                          )
+                        ],
+                      ),
+                      width: 250,
+                      child: Image.network(
+                        widget.thumb,
+                        headers: const {
+                          "User-Agent":
+                              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+                        },
+                      ),
+                    ),
                   ),
-                  width: 250,
-                  child: Image.network(
-                    widget.thumb,
-                    headers: const {
-                      "User-Agent":
-                          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                    },
-                  ),
-                ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(
-            height: 25,
-          ),
-          FutureBuilder(
-            future: webtoon,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: Column(
+              const SizedBox(
+                height: 25,
+              ),
+              FutureBuilder(
+                future: webtoon,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -109,12 +110,31 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                         ),
                       ],
-                    ));
-              }
-              return Text("...");
-            },
-          )
-        ],
+                    );
+                  }
+                  return Text("...");
+                },
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              FutureBuilder(
+                future: episodes,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        for (var episode in snapshot.data!)
+                          Episodes(episode: episode, webtoonId: widget.id)
+                      ],
+                    );
+                  }
+                  return Container();
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
